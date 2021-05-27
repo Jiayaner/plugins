@@ -1,0 +1,19 @@
+{
+  "name": "postcss-add-background-size",
+  "version": "1.0.0",
+  "description": "Set the width and height values ​​according to the width and height of the local image.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "css",
+    "postcss",
+    "postcss-plugin"
+  ],
+  "author": "JiayanFeng",
+  "license": "ISC",
+  "dependencies": {
+    "image-size": "^1.0.0"
+  }
+}
