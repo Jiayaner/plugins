@@ -19,7 +19,7 @@ module.exports = postcss.plugin("postcss-add-background-size", ({ cssPath = "" }
               var fileUrl = path.resolve(process.cwd(), cssPath, resArr[2]);
               fileInfo = sizeOf(fileUrl);
             } catch (error) {
-              console.log("图片读取错误");
+              console.log("load image err");
               throw error;
             }
           }
@@ -39,7 +39,7 @@ module.exports = postcss.plugin("postcss-add-background-size", ({ cssPath = "" }
             });
             fileInfoSession.set(resArr[2], { width: width, height: height });
           } else {
-            console.error(`设置图片${resArr[2]}大小失败`);
+            console.error(`set the width and height value err : ${resArr[2]}`);
           }
         }
       });
