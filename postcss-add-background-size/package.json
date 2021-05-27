@@ -12,6 +12,7 @@
     "postcss-plugin"
   ],
   "author": "JiayanFeng",
+  "homepage": "https://github.com/Jiayaner/plugins/tree/main/postcss-add-background-size",
   "license": "ISC",
   "dependencies": {
     "image-size": "^1.0.0"
