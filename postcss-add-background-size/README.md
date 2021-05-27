@@ -2,8 +2,10 @@
 Set the width and height values ​​according to the width and height of the local image.
 
 params:
-| key | type | info |
-| cssPath | string |  css file path which is based on pwd（）  |
+| key |type  |  info|
+| --- | --- |--- |
+| cssPath | string |  css file path which is based on pwd（）|
+
 
 webpack.config.js:
 ```js
