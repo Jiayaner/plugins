@@ -1,0 +1,15 @@
+{
+  "name": "px2vwh-loader",
+  "version": "1.0.0",
+  "description": "px转vw/vh",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "postcss": "^5.0.0",
+    "px2vwh": "^1.0.0"
+  },
+  "author": "jiayanFung",
+  "license": "ISC"
+}
