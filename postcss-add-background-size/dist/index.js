@@ -31,50 +31,40 @@ const canDealImage = function (excludeArr, targetUrl) {
   return !excludeReg.test(targetUrl);
 };
 
-module.exports = postcss.plugin("postcss-add-background-size", ({ cssPath = "", width: widthConf, height: heightConf, exclude }) => {
-  return (root) => {
+module.exports = postcss.plugin("postcss-add-background-size", ({ width: widthConf, height: heightConf, exclude }) => {
+  return (root, result) => {
     root.walkRules((rule) => {
-      rule.walkDecls(/^background-?/, ({ value }) => {
-        let resArr = value.match(/url\(("|')?([.\/a-z0-9A-Z_-]+)("|')?\)/);
-
-        // 网络图片不加载
+      rule.walkDecls(/^background-?/, (decl) => {
+        let resArr = decl.value.match(/url\(("|')?([.\/\w-]+)("|')?\)/);
         if (resArr && resArr[2] && canDealImage(exclude, resArr[2])) {
-          let fileInfo = null;
+          let fileInfo;
           if (fileInfoSession.has(resArr[2])) {
             fileInfo = fileInfoSession.get(resArr[2]);
           } else {
             try {
-              var fileUrl = path.resolve(process.cwd(), cssPath, resArr[2]);
+              let fromUrl = decl.source.input.file || result.opts.from || "";
+              let curFileUrl = fromUrl.replace(/[\w-]+\.[a-z]+$/, "");
+              let fileUrl = path.resolve(curFileUrl, resArr[2]);
               fileInfo = sizeOf(fileUrl);
             } catch (error) {
               console.log("load image err");
-              throw error;
             }
           }
+          if (fileInfo && fileInfo.width && fileInfo.height) {
+            let curWidthUnit = widthConf && widthConf.unit && widthConf.unit != DEFAULT_UNIT && +widthConf.value ? widthConf.unit : DEFAULT_UNIT,
+              curWidthValue = widthConf && widthConf.unit && widthConf.unit != DEFAULT_UNIT && +widthConf.value ? widthConf.value : DEFAULT_VALUE,
+              curHeightUnit = heightConf && heightConf.unit && heightConf.unit != DEFAULT_UNIT && +heightConf.value ? heightConf.unit : DEFAULT_UNIT,
+              curHeightValue = heightConf && heightConf.unit && heightConf.unit != DEFAULT_UNIT && +heightConf.value ? heightConf.value : DEFAULT_VALUE;
 
-          if (fileInfo.width && fileInfo.height) {
-            let curWidthUnit = DEFAULT_UNIT,
-              curWidthValue = DEFAULT_VALUE;
-            let curHeightUnit = DEFAULT_UNIT,
-              curHeightValue = DEFAULT_VALUE;
-
-            if (widthConf && widthConf.unit && widthConf.unit != DEFAULT_UNIT && +widthConf.value) {
-              curWidthUnit = widthConf.unit;
-              curWidthValue = widthConf.value;
-            }
-            if (heightConf && heightConf.unit && heightConf.unit != DEFAULT_UNIT && +heightConf.value) {
-              curHeightUnit = heightConf.unit;
-              curHeightValue = heightConf.value;
-            }
-            rule.append({
+            rule.insertAfter(decl, {
               prop: "width",
               value: getRealCssValue(fileInfo.width, curWidthUnit, curWidthValue),
             });
-            rule.append({
+            rule.insertAfter(decl, {
               prop: "height",
               value: getRealCssValue(fileInfo.height, curHeightUnit, curHeightValue),
             });
-            rule.append({
+            rule.insertAfter(decl, {
               prop: "background-size",
               value: "contain",
             });
