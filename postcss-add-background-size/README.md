@@ -4,9 +4,12 @@
 识别 css 样式中 url（）加载的本地图片,为元素自动添加 width 和 height。
 
 ### 说明
-1、支持 px、vh、vw、rem。
-2、width、height、background-size可在当前类名下重写。
-3、同名文件变更需重启服务。
+> 1、支持 px、vh、vw、rem。
+
+> 2、width、height、background-size可在当前类名下重写。
+
+> 3、同名文件变更需重启服务。
+
 
 ### 参数
 插件参数:
