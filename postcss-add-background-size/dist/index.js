@@ -22,21 +22,19 @@ const getRealCssValue = function (value, type, baseValue) {
 };
 
 const canDealImage = function (excludeArr, targetUrl) {
-  if (Object.prototype.toString.call(excludeArr) !== "[object Array]") {
-    return true;
-  }
   let realExcludeArr = DEFAULT_EXCLUDE_IMAGE.concat(excludeArr);
   let excludeRegStr = realExcludeArr.join("|");
   let excludeReg = new RegExp(excludeRegStr);
   return !excludeReg.test(targetUrl);
 };
 
-module.exports = postcss.plugin("postcss-add-background-size", ({ width: widthConf, height: heightConf, exclude }) => {
+module.exports = postcss.plugin("postcss-add-background-size", (options) => {
   return (root, result) => {
     root.walkRules((rule) => {
       rule.walkDecls(/^background-?/, (decl) => {
         let resArr = decl.value.match(/url\(("|')?([.\/\w-]+)("|')?\)/);
-        if (resArr && resArr[2] && canDealImage(exclude, resArr[2])) {
+        let realExcludeArr = options && Object.prototype.toString.call(options.exclude) == "[object Array]" ? options.exclude : [];
+        if (resArr && resArr[2] && canDealImage(realExcludeArr, resArr[2])) {
           let fileInfo;
           if (fileInfoSession.has(resArr[2])) {
             fileInfo = fileInfoSession.get(resArr[2]);
@@ -51,10 +49,10 @@ module.exports = postcss.plugin("postcss-add-background-size", ({ width: widthCo
             }
           }
           if (fileInfo && fileInfo.width && fileInfo.height) {
-            let curWidthUnit = widthConf && widthConf.unit && widthConf.unit != DEFAULT_UNIT && +widthConf.value ? widthConf.unit : DEFAULT_UNIT,
-              curWidthValue = widthConf && widthConf.unit && widthConf.unit != DEFAULT_UNIT && +widthConf.value ? widthConf.value : DEFAULT_VALUE,
-              curHeightUnit = heightConf && heightConf.unit && heightConf.unit != DEFAULT_UNIT && +heightConf.value ? heightConf.unit : DEFAULT_UNIT,
-              curHeightValue = heightConf && heightConf.unit && heightConf.unit != DEFAULT_UNIT && +heightConf.value ? heightConf.value : DEFAULT_VALUE;
+            let curWidthUnit = options && options.width && options.width.unit && options.width.unit != DEFAULT_UNIT && +options.width.value ? options.width.unit : DEFAULT_UNIT,
+              curWidthValue = options && options.width && options.width.unit && options.width.unit != DEFAULT_UNIT && +options.width.value ? options.width.value : DEFAULT_VALUE,
+              curHeightUnit = options && options.height && options.height.unit && options.height.unit != DEFAULT_UNIT && +options.height.value ? options.height.unit : DEFAULT_UNIT,
+              curHeightValue = options && options.height && options.height.unit && options.height.unit != DEFAULT_UNIT && +options.height.value ? options.height.value : DEFAULT_VALUE;
 
             rule.insertAfter(decl, {
               prop: "width",
